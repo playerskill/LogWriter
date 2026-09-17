@@ -1,0 +1,8 @@
+name: LogWriter
+version: 1.0
+main: com.Player_SkiLL.logwriter.LogWriterPlugin
+api-version: 1.12
+commands:
+  logwrite:
+    description: Записывает сообщение в лог
+    usage: /logwrite <сообщение>
