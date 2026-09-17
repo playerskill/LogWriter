@@ -5,9 +5,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,19 +23,10 @@ public class LogWriterPlugin extends JavaPlugin implements CommandExecutor {
             getDataFolder().mkdirs();
         }
 
-        // Создаем файл конфигурации log-mappings.yml, если его нет
-        File mappingConfig = new File(getDataFolder(), "log-mappings.yml");
-        if (!mappingConfig.exists()) {
-            try (InputStream in = getResource("log-mappings.yml")) {
-                if (in != null) {
-                    Files.copy(in, mappingConfig.toPath());
-                }
-            } catch (IOException e) {
-                getLogger().severe("Не удалось создать log-mappings.yml");
-            }
-        }
+        // Загружаем конфиг (уже есть по умолчанию)
+        saveDefaultConfig();
 
-        // Загружаем связи из конфигурации
+        // Загружаем связи из конфигурационного файла
         loadMappings();
 
         // Инициализация файлов логов
@@ -45,23 +37,15 @@ public class LogWriterPlugin extends JavaPlugin implements CommandExecutor {
     }
 
     private void loadMappings() {
-        try (Reader reader = new FileReader(new File(getDataFolder(), "log-mappings.yml"))) {
-            Yaml yaml = new Yaml();
-            Map<String, Object> data = yaml.load(reader);
-            if (data != null && data.containsKey("logs")) {
-                Map<String, Object> logs = (Map<String, Object>) data.get("logs");
-                for (Map.Entry<String, Object> entry : logs.entrySet()) {
-                    try {
-                        int key = Integer.parseInt(entry.getKey());
-                        String filename = entry.getValue().toString();
-                        logMappings.put(key, filename);
-                    } catch (NumberFormatException e) {
-                        getLogger().warning("Некорректный ключ в log-mappings.yml: " + entry.getKey());
-                    }
-                }
+        // Читаем раздел logs из config.yml
+        for (String keyStr : getConfig().getConfigurationSection("logs").getKeys(false)) {
+            try {
+                int key = Integer.parseInt(keyStr);
+                String filename = getConfig().getString("logs." + keyStr);
+                logMappings.put(key, filename);
+            } catch (NumberFormatException e) {
+                getLogger().warning("Некорректный ключ в конфиге: " + keyStr);
             }
-        } catch (IOException e) {
-            getLogger().severe("Ошибка чтения log-mappings.yml");
         }
     }
 
@@ -108,3 +92,4 @@ public class LogWriterPlugin extends JavaPlugin implements CommandExecutor {
         return false;
     }
 }
+      
