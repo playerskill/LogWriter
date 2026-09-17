@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -60,7 +61,13 @@ public class LogWriterPlugin extends JavaPlugin implements Listener {
     private void logMessage(String senderName, String message) {
         String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String logLine = "[" + timeStamp + "] [" + senderName + "] " + message;
-        try (FileWriter writer = new FileWriter(getDataFolder() + "/log.txt", true)) {
+
+        File dataFolder = getDataFolder();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs(); // Создаем папку, если ее нет
+        }
+
+        try (FileWriter writer = new FileWriter(new File(dataFolder, "log.txt"), true)) {
             writer.write(logLine + "\n");
         } catch (IOException e) {
             getLogger().warning("Ошибка записи лога: " + e.getMessage());
