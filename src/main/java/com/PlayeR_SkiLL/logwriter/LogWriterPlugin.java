@@ -17,11 +17,15 @@ import java.time.format.DateTimeFormatter;
 
 public class LogWriterPlugin extends JavaPlugin implements Listener {
 
+    // Статическое сообщение, которое не редактируется через конфиг
+    private static final String LOGWRITER_INFO = "&f[&aLogWriter&f] &7Простой плагин от &6PlayeR_SkiLL &7для логирования действий.";
+
     @Override
     public void onEnable() {
         // Регистрация слушателя событий
         getServer().getPluginManager().registerEvents(this, this);
-        getLogger().info("LogWriter включен");
+        // Вывод фиксированного сообщения в консоль при включении плагина
+        getLogger().info(ChatColor.translateAlternateColorCodes('&', LOGWRITER_INFO));
     }
 
     @Override
