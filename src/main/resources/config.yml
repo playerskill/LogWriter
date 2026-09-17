@@ -1,9 +1,7 @@
 logs:
-  "1": "../PlayerReport/log.yml"
-  "2": "../Punishment/log.yml"
-  "3": "../AnotherPlugin/log.yml"
-  "4": "../SomePlugin/log.yml"
-  "5": "../TestPlugin/log.yml"
+  1: log-reports.yml
+  2: another-log.yml
+  3: custom-log.yml
 messages:
   no-permission: "&cУ вас нет прав."
   usage: "&cИспользование: /logtext [номер] [текст]"
